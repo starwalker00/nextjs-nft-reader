@@ -1,8 +1,8 @@
-function NFTList({ nftcount, nfts }) {
+function NFTList({ nfts }) {
     return (
         <>
             <div>
-                {nftcount}
+                {nfts.totalCount}
             </div>
             <div>
                 {/* {JSON.stringify(nfts)} */}

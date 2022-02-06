@@ -1,4 +1,4 @@
-function Form({ refreshData }) {
+function Form({ defaultOwnerAddress, refreshData }) {
     const submitFunction = async event => {
         event.preventDefault()
         refreshData(event.target.address.value)
@@ -6,7 +6,7 @@ function Form({ refreshData }) {
     return (
         <form onSubmit={submitFunction}>
             <label htmlFor="address">Address</label>
-            <input id="address" name="address" type="text" autoComplete="address" defaultValue="0xC33881b8FD07d71098b440fA8A3797886D831061" required />
+            <input id="address" name="address" type="text" autoComplete="address" defaultValue={defaultOwnerAddress} required />
             <button type="submit">Search</button>
         </form >
     )

@@ -4,44 +4,47 @@ import NFTList from '../components/NFTList'
 import { useRouter } from 'next/router';
 import { createAlchemyWeb3 } from "@alch/alchemy-web3";
 
-let defaultOwnerAddr = "0xfa5d05df712b059b74ccefe4084785be7f2ea1b8";
+let defaultOwnerAddress = "0xfa5d05df712b059b74ccefe4084785be7f2ea1b8";
 
-function Home({ nftcount, nfts }) {
+function Home({ nfts }) {
   const router = useRouter();
 
   // Call this function whenever you want to refresh props
-  const refreshData = (ownerAddr) => {
+  const refreshData = (ownerAddress) => {
     router.replace({
       pathname: router.asPath.split('?')[0], // remove old parameters
-      query: { ownerAddr: ownerAddr }
+      query: { ownerAddr: ownerAddress }
     })
   }
   return (
     <div>
-      <NFTList nftcount={nftcount} nfts={nfts} />
-      <Form refreshData={refreshData} />
+      <Form defaultOwnerAddress={defaultOwnerAddress} refreshData={refreshData} />
+      <NFTList nfts={nfts} />
     </div>
   )
 }
 
 export async function getServerSideProps(context) {
-  let ownerAddr;
-  if (context.query.ownerAddr) {
-    ownerAddr = context.query.ownerAddr; // get parameter from router.replace() call
+  let ownerAddress;
+  if (context.query.ownerAddress) {
+    ownerAddress = context.query.ownerAddress; // get parameter from router.replace() call
   } else {
-    ownerAddr = defaultOwnerAddr;
+    ownerAddress = defaultOwnerAddress;
   }
   const apiKey = "demo";
   const web3 = createAlchemyWeb3(
     `https://eth-mainnet.g.alchemy.com/v2/${apiKey}`,
   );
-  const nfts = await web3.alchemy.getNfts({
-    owner: ownerAddr
+  let nfts = await web3.alchemy.getNfts({
+    owner: ownerAddress
   })
   const nftcount = 2;
-  console.log(nfts)
+  // console.log(nfts);
+  nfts.ownedNfts = nfts.ownedNfts.slice(0, 9); // keep only first 10 NFTs
+  console.log(nfts);
+
   // Pass data to the page via props
-  return { props: { nftcount, nfts } }
+  return { props: { nfts } }
 }
 
 export default Home
