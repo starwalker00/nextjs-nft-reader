@@ -13,7 +13,7 @@ function Home({ nfts }) {
   const refreshData = (ownerAddress) => {
     router.replace({
       pathname: router.asPath.split('?')[0], // remove old parameters
-      query: { ownerAddr: ownerAddress }
+      query: { ownerAddress: ownerAddress }
     })
   }
   return (
