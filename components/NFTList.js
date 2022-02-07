@@ -5,10 +5,12 @@ function NFTList({ nfts }) {
                 {nfts.totalCount}
             </div>
             <div>
-                {/* {JSON.stringify(nfts)} */}
                 <ul>
-                    {nfts.ownedNfts.map(nftContract => (
-                        <li key={JSON.stringify(nftContract)}>{JSON.stringify(nftContract)}</li>
+                    {nfts.ownedNfts.map(nft => (
+                        <li key={JSON.stringify(nft)}>
+                            <img src={nft.image} alt={nft.title} />
+                            {JSON.stringify(nft)}
+                        </li>
                     ))}
                 </ul>
             </div>
