@@ -3,7 +3,7 @@ import NFTList from '../components/NFTList'
 import NFTCount from '../components/NFTCount'
 import CurrentAddress from '../components/CurrentAddress'
 
-import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router';
 
 import { createAlchemyWeb3 } from "@alch/alchemy-web3";
@@ -12,18 +12,24 @@ let defaultOwnerAddress = "0xfa5d05df712b059b74ccefe4084785be7f2ea1b8";
 let ownerAddress;
 
 function Home({ nfts }) {
+  const [isRefreshing, setIsRefreshing] = useState(false)
   const router = useRouter();
   // Call this function whenever you want to refresh props
   const refreshData = (ownerAddress) => {
     router.replace({
       pathname: router.asPath.split('?')[0], // remove old parameters
       query: { ownerAddress: ownerAddress }
-    })
+    });
+    setIsRefreshing(true);
   }
+  useEffect(() => {
+    setIsRefreshing(false);
+  }, [nfts]);
   return (
     <>
-      <Link href="/">HOME</Link>
+      <button onClick={() => refreshData(defaultOwnerAddress)}>HOME</button>
       <Form defaultOwnerAddress={defaultOwnerAddress} refreshData={refreshData} />
+      {isRefreshing ? <span>loading...</span> : <span>loaded</span>}
       <CurrentAddress address={router.query.ownerAddress ? router.query.ownerAddress : defaultOwnerAddress} />
       <NFTCount totalCount={nfts.totalCount} />
       <NFTList nfts={nfts} />
