@@ -48,11 +48,7 @@ export async function getServerSideProps(context) {
   // console.log(nfts);
 
   // fill metadatas for each NFT
-  // for (const nft of nfts.ownedNfts) {
-  //   console.log(`${nft.contract}`);
-  // }
   for (let [iter, nft] of nfts.ownedNfts.entries()) {
-    // nfts.ownedNfts[i] = 'f'; // change value
     const NftMetadata = await web3.alchemy.getNftMetadata({
       contractAddress: nft.contract.address,
       tokenId: nft.id.tokenId
@@ -60,7 +56,7 @@ export async function getServerSideProps(context) {
     console.log(NftMetadata)
     nfts.ownedNfts[iter].title = NftMetadata.title;
 
-    // testing all cases, clean after everything is clarified
+    // testing all cases, clean after everything is identified
     if (NftMetadata.metadata.image) {
       let HTTPUrl = NftMetadata.metadata.image;
       if (NftMetadata.metadata.image.startsWith('ipfs://')) {
