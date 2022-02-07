@@ -19,7 +19,7 @@ function Form({ defaultOwnerAddress, refreshData }) {
     return (
         <FormStyled onSubmit={submitFunction}>
             {/* <label htmlFor="address">Address : </label> */}
-            <InputStyled id="address" name="address" type="text" autoComplete="address" defaultValue={defaultOwnerAddress} size="43" required />
+            <InputStyled id="address" name="address" type="text" autoComplete="address" defaultValue={defaultOwnerAddress} size="46" required />
             <ButtonStyled type="submit">Search</ButtonStyled>
         </FormStyled >
     )
