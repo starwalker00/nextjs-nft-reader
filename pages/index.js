@@ -1,19 +1,17 @@
 import Form from '../components/Form'
 import NFTList from '../components/NFTList'
-import styled from 'styled-components';
+import NFTCount from '../components/NFTCount'
+import CurrentAddress from '../components/CurrentAddress'
 
 import { useRouter } from 'next/router';
 import { createAlchemyWeb3 } from "@alch/alchemy-web3";
 
 let defaultOwnerAddress = "0xfa5d05df712b059b74ccefe4084785be7f2ea1b8";
+let ownerAddress;
 
-const Wrapper = styled.main`
-  padding: 4em;
-`;
 
 function Home({ nfts }) {
   const router = useRouter();
-
   // Call this function whenever you want to refresh props
   const refreshData = (ownerAddress) => {
     router.replace({
@@ -22,15 +20,16 @@ function Home({ nfts }) {
     })
   }
   return (
-    <Wrapper>
+    <>
       <Form defaultOwnerAddress={defaultOwnerAddress} refreshData={refreshData} />
+      <CurrentAddress address={router.query.ownerAddress ? router.query.ownerAddress : defaultOwnerAddress} />
+      <NFTCount totalCount={nfts.totalCount} />
       <NFTList nfts={nfts} />
-    </Wrapper>
+    </>
   )
 }
 
 export async function getServerSideProps(context) {
-  let ownerAddress;
   if (context.query.ownerAddress) {
     ownerAddress = context.query.ownerAddress; // get parameter from router.replace() call
   } else {
