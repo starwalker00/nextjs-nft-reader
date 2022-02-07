@@ -10,10 +10,20 @@ const ListItem = styled.li`
 border: 1px dashed red;
 display:flex;
 background: papayawhip;
-overflow;auto;
+overflow-wrap: break-word;
+justify-content: center;
+align-items: center;
 `;
 const ImageItem = styled.img`
 height: 150px;
+`;
+const NFTTitle = styled.h2`
+padding-left:2em;
+padding-right:2em;
+`;
+const JSONString = styled.span`
+text-align:center;
+overflow:auto;
 `;
 
 function NFTList({ nfts }) {
@@ -34,9 +44,13 @@ function NFTList({ nfts }) {
                                     :
                                     <ImageItem src={nft.image} alt={nft.title} />
                             }
-
-
-                            {JSON.stringify(nft)}
+                            { // display title if it exists
+                                nft.title ?
+                                    <NFTTitle>{nft.title}</NFTTitle>
+                                    :
+                                    <NFTTitle>No title</NFTTitle>
+                            }
+                            <JSONString>{JSON.stringify(nft)}</JSONString>
                         </ListItem>
                     ))}
                 </List>
