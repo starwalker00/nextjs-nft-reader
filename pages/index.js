@@ -38,47 +38,66 @@ function Home({ nfts }) {
 }
 
 export async function getServerSideProps(context) {
+
+  // 0. set eth address to query for nft list
   if (context.query.ownerAddress) {
     ownerAddress = context.query.ownerAddress; // get parameter from router.replace() call
   } else {
     ownerAddress = defaultOwnerAddress;
   }
+
+  // 1. connect to API and get NFT list
+  let nfts, web3;
   const apiKey = "demo";
-  const web3 = createAlchemyWeb3(
-    `https://eth-mainnet.g.alchemy.com/v2/${apiKey}`,
-  );
-  let nfts = await web3.alchemy.getNfts({
-    owner: ownerAddress
-  })
-  // console.log(nfts);
-  nfts.ownedNfts = nfts.ownedNfts.slice(0, 9); // keep only first 2 NFTs
-  // console.log(nfts);
-
-  // fill metadatas for each NFT
-  for (let [iter, nft] of nfts.ownedNfts.entries()) {
-    const NftMetadata = await web3.alchemy.getNftMetadata({
-      contractAddress: nft.contract.address,
-      tokenId: nft.id.tokenId
+  try {
+    web3 = createAlchemyWeb3(
+      `https://eth-mainnet.g.alchemy.com/v2/${apiKey}`,
+    );
+    nfts = await web3.alchemy.getNfts({
+      owner: ownerAddress
     })
-    console.log(NftMetadata)
-    nfts.ownedNfts[iter].title = NftMetadata.title;
+    // console.log(nfts);
+    nfts.ownedNfts = nfts.ownedNfts.slice(0, 9); // keep only first 2 NFTs
+    // console.log(nfts);
+  } catch (error) {
+    console.log("error fetching nft list");
+    console.log(error);
+  }
 
-    // testing all cases, clean after everything is identified
-    if (NftMetadata.metadata.image) {
-      let HTTPUrl = NftMetadata.metadata.image;
-      if (NftMetadata.metadata.image.startsWith('ipfs://')) {
-        HTTPUrl = convertIPFStoHTTP(HTTPUrl);
-      }
-      if (HTTPUrl.endsWith('.webm')) {
-        nfts.ownedNfts[iter].video = HTTPUrl;
-      } else {
-        nfts.ownedNfts[iter].image = HTTPUrl;
+  // 2. fill metadatas for each NFT
+  if (nfts.ownedNfts) {
+    for (let [iter, nft] of nfts.ownedNfts.entries()) {
+      try {
+        const NftMetadata = await web3.alchemy.getNftMetadata({
+          contractAddress: nft.contract.address,
+          tokenId: nft.id.tokenId
+        })
+        console.log(NftMetadata)
+        nfts.ownedNfts[iter].title = NftMetadata.title;
+
+        // testing all cases, clean after everything is identified
+        if (NftMetadata.metadata.image) {
+          let HTTPUrl = NftMetadata.metadata.image;
+          if (NftMetadata.metadata.image.startsWith('ipfs://')) {
+            HTTPUrl = convertIPFStoHTTP(HTTPUrl);
+          }
+          if (HTTPUrl.endsWith('.webm')) {
+            nfts.ownedNfts[iter].video = HTTPUrl;
+          } else {
+            nfts.ownedNfts[iter].image = HTTPUrl;
+          }
+        }
+        else {
+          nfts.ownedNfts[iter].image = "https://via.placeholder.com/150"
+        }
+        // console.log(nfts.ownedNfts[iter])
+      } catch (error) {
+        console.log("error fetching nft metadatas");
+        console.log(error);
       }
     }
-    else {
-      nfts.ownedNfts[iter].image = "https://via.placeholder.com/150"
-    }
-    // console.log(nfts.ownedNfts[iter])
+  } else {
+    console.log(`${ownerAddress} does not own any NFT`);
   }
 
   // Pass data to the page via props
