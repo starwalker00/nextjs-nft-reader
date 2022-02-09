@@ -48,7 +48,7 @@ export async function getServerSideProps(context) {
 
   // 1. connect to API and get NFT list
   let nfts, web3;
-  const apiKey = "demo";
+  const apiKey = process.env.ALCHEMY_KEY || "demo";
   try {
     web3 = createAlchemyWeb3(
       `https://eth-mainnet.g.alchemy.com/v2/${apiKey}`,
@@ -72,7 +72,7 @@ export async function getServerSideProps(context) {
           contractAddress: nft.contract.address,
           tokenId: nft.id.tokenId
         })
-        console.log(NftMetadata)
+        // console.log(NftMetadata)
         nfts.ownedNfts[iter].title = NftMetadata.title;
 
         // testing all cases, clean after everything is identified
